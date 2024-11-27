@@ -1,3 +1,6 @@
+import java.sql.*;
+import javax.swing.JOptionPane;
+import project.ConnectionProvider;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -40,6 +43,8 @@ public class newStudent extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setLocation(new java.awt.Point(325, 150));
+        setUndecorated(true);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -88,19 +93,69 @@ public class newStudent extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/save-icon--1.png"))); // NOI18N
         jButton1.setText("Save");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 350, -1, -1));
 
         jButton2.setBackground(new java.awt.Color(255, 255, 204));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/red-x-mark-transparent-background-3.png"))); // NOI18N
         jButton2.setText("Close");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 350, -1, -1));
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/123456.png"))); // NOI18N
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 450));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String studentID = jTextField1.getText();
+    String name = jTextField2.getText();
+    String email = jTextField3.getText();
+    String courseName = (String) jComboBox1.getSelectedItem();
+    String branchName = (String) jComboBox2.getSelectedItem();
+
+    // Check if fields are empty
+    if (studentID.isEmpty() || name.isEmpty() || email.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "All fields must be filled!");
+        return;
+    }
+
+    try {
+        // Establish database connection
+        Connection con = ConnectionProvider.getCon();
+        Statement st = con.createStatement();
+
+        // Insert student data into database
+        st.executeUpdate("INSERT INTO Student (studentID, name, email, courseName, branchName) VALUES ('"
+                + studentID + "', '" + name + "', '" + email + "', '" + courseName + "', '" + branchName + "')");
+
+        // Show success message
+        JOptionPane.showMessageDialog(null, "Successfully updated");
+        setVisible(false);
+        new newStudent().setVisible(true);  // Refresh the form
+
+    } catch (SQLException e) {
+        // Show error message if student ID already exists or other issues
+        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+        setVisible(false);
+        new newStudent().setVisible(true);  // Refresh the form
+    }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        setVisible(false);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
