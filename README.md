@@ -3,6 +3,8 @@
 ## Description
 The **Library Management System** is a Java-based application developed using JFrame in NetBeans with MySQL as the database backend. This project aims to simplify library operations such as adding students, managing books, issuing and returning books, and tracking issued/returned book statistics. 
 
+![image alt](https://github.com/PahanSanajana/Library-Management-System/blob/16c98340b7b4ade8bcedd863d8bf92ccf4f5ccd2/Library%20Management%20System.png)
+
 ---
 
 ## Features
