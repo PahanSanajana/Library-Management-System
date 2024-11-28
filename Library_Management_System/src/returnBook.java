@@ -1,3 +1,7 @@
+import java.sql.*;
+import javax.swing.JOptionPane;
+import project.ConnectionProvider;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -79,18 +83,33 @@ public class returnBook extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/search.png"))); // NOI18N
         jButton1.setText("Search");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 150, -1, -1));
 
         jButton2.setBackground(new java.awt.Color(255, 255, 204));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/return book png.png"))); // NOI18N
         jButton2.setText("Return");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 310, -1, -1));
 
         jButton3.setBackground(new java.awt.Color(255, 255, 204));
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/red-x-mark-transparent-background-3.png"))); // NOI18N
         jButton3.setText("Close");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 310, -1, -1));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/123456.png"))); // NOI18N
@@ -98,6 +117,65 @@ public class returnBook extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String bookID = jTextField1.getText();
+    String studentID = jTextField2.getText();
+    try (Connection con = ConnectionProvider.getCon();
+         PreparedStatement ps = con.prepareStatement("SELECT * FROM issue WHERE bookID = ? AND studentID = ?")) {
+        ps.setString(1, bookID);
+        ps.setString(2, studentID);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                jTextField3.setText(rs.getString("issueDate")); // Use column names
+                jTextField4.setText(rs.getString("dueDate"));
+                jTextField1.setEditable(false);
+                jTextField2.setEditable(false);
+            } else {
+                JOptionPane.showMessageDialog(null, "Book is not issued to this student");
+                setVisible(false);
+                new returnBook().setVisible(true);
+            }
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+    }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        String bookID = jTextField1.getText();
+    String studentID = jTextField2.getText();
+
+    if (bookID.isEmpty() || studentID.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Book ID and Student ID cannot be empty!");
+        return;
+    }
+
+    try (Connection con = ConnectionProvider.getCon();
+         PreparedStatement ps = con.prepareStatement("update issue set returnBook=? where studentID=? and bookID=?")) {
+        ps.setString(1, "YES");
+        ps.setString(2, studentID);
+        ps.setString(3, bookID);
+
+        int rowsUpdated = ps.executeUpdate();
+        if (rowsUpdated > 0) {
+            JOptionPane.showMessageDialog(null, "Book Successfully Returned");
+            setVisible(false);
+            new returnBook().setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "No matching record found!");
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+        e.printStackTrace();
+    }
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+         setVisible(false);
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -135,6 +213,7 @@ public class returnBook extends javax.swing.JFrame {
         });
     }
 
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
